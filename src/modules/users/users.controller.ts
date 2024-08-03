@@ -4,21 +4,29 @@ import {
   Post,
   Body,
   Param,
-  Req,
+  // Req,
   HttpException,
   HttpStatus,
-  UnauthorizedException,
+  // UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Request } from 'express';
+// import { Request } from 'express';
 import { LoggingService } from '../logging/logging.service';
-import { ForbiddenException } from 'src/util/forbidden.exception';
+// import { ForbiddenException } from 'src/util/forbidden.exception';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariablesType } from 'src/config/envConfig';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './schemas/user.schema';
+import { Model } from 'mongoose';
+
 @Controller('users')
 export class UsersController {
   constructor(
+    private configService: ConfigService<EnvironmentVariablesType>,
     private readonly usersService: UsersService,
     private readonly loggingService: LoggingService,
+    @InjectModel(User.name) private userModule: Model<User>,
   ) {}
 
   @Post()
@@ -29,7 +37,6 @@ export class UsersController {
   @Get()
   async findAll() {
     try {
-      throw new UnauthorizedException();
       return await this.usersService.findAll();
     } catch (error) {
       throw new HttpException(
